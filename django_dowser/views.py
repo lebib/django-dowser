@@ -14,14 +14,14 @@ from . import reftree
 def index(request):
     floor = request.REQUEST.get('floor', 0)
     rows = []
-    typenames = dowser.history.keys()
+    typenames = list(dowser.history.keys())
     typenames.sort()
     for typename in typenames:
         history = dowser.history[typename]
         maxhist = 0
         for hist in history:
             maxhist = max(maxhist,max(hist))
-        charts = " ".join(map(lambda x: '<img class="chart" src="%s" alt="%s"/>' % (chart_url2(history[x]),DOWSER_NAMES[x]),range(len(history))))
+        charts = " ".join(['<img class="chart" src="%s" alt="%s"/>' % (chart_url2(history[x]),DOWSER_NAMES[x]) for x in range(len(history))])
         if maxhist > int(floor):
             row = ('<div class="typecount">%s<br />'
 #                   '<img class="chart" src="%s" /><br />'
@@ -40,7 +40,7 @@ def index(request):
                               context_instance=RequestContext(request))
 
 def chart_url2(entries):
-    url = "http://chart.apis.google.com/chart?chs=%sx20&cht=ls&chco=0077CC&chd=t:%s" % (len(entries),",".join(map(lambda x:str(x),reversed(entries))))
+    url = "http://chart.apis.google.com/chart?chs=%sx20&cht=ls&chco=0077CC&chd=t:%s" % (len(entries),",".join([str(x) for x in reversed(entries)]))
     return url
     
 def chart_url(typename,history_slot=0):
@@ -227,7 +227,7 @@ class ReferrerTree(reftree.Tree):
     def get_refkey(self, obj, referent):
         """Return the dict key or attribute name of obj which refers to referent."""
         if isinstance(obj, dict):
-            for k, v in obj.iteritems():
+            for k, v in list(obj.items()):
                 if v is referent:
                     return " (via its %r key)" % k
         
